@@ -658,7 +658,7 @@ function getDelimiter(format){
     })
     return delimiter
 }
-
+//Time picker
 let timepicker = document.querySelectorAll('.timepicker')
 timepicker.forEach(function(item, index){
     
@@ -666,13 +666,12 @@ timepicker.forEach(function(item, index){
     let value = item.value.toLowerCase()
     let format = item.dataset.timeFormat
     format = (format == undefined) ? 24 : format
-    let date = new Date()
     
     let updValue = getTime(value)
     
     newTime.value = updValue
     
-    let time = converTime(date,updValue)
+    let time = converTime(updValue)
     
     let oceanTime = document.createElement('div')
         oceanTime.setAttribute('class','ocean-datepicker dropdown')
@@ -727,7 +726,8 @@ function getTime(value){
     
     return arrTime[0]+':'+arrTime[1]+secMeridian
 }
-function converTime(date,value){
+function converTime(value){
+    let date = new Date()
     value = value.toLowerCase()
     value = value.replace(' ',':')
     let pm = value.indexOf('pm')
@@ -787,8 +787,18 @@ function createTimepicker(date,navTime,value){
     navTime.append(headTime)
     navTime.append(bodyTime)
     navTime.append(footerTime)
+    eventKeyup(date,navTime)
     actionbtnTime(date,navTime)
     updateTime(date,value,bodyTime)
+}
+function eventKeyup(date,navTime){
+    let inpTime = navTime.previousSibling
+    let body = navTime.children[1]
+    inpTime.addEventListener('keyup',function(){
+        value = inpTime.value
+        let convertTime = converTime(value)
+        updateTime(convertTime,value,body)
+    })
 }
 function actionbtnTime(date,navTime){
 
@@ -873,7 +883,7 @@ function actionbtnTime(date,navTime){
     })
 }
 function updateTime(date,value,body){
-    let navTime = body.parentNode
+    //let navTime = body.parentNode
     //console.log(value)
     let head = body.previousSibling
     let childHead = head.children[2]
