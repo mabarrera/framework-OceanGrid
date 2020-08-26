@@ -323,37 +323,103 @@ document.addEventListener('click', function(e){
         
     /******** dropdown ********/
     let toggleall = document.querySelectorAll('.dropdown-toggle');
-    toggleall.forEach(function(item){
-      let dropdown = item.parentNode;
-      if (link != item) {
-        dropdown.classList.remove('show');
-      }
-      
-      if(dropdown.classList.contains('select-multiple') || dropdown.classList.contains('select-search')){          
-        let dropNav = dropdown.children[1]
-        let childs = dropNav.childNodes
-        childs.forEach(function(child){            
-            if(child.classList.contains('input-search')){
-                let search = child.children[0]
-                if (link == search) {
+    toggleall.forEach(function(btn){
+        let dropdown = btn.parentNode;
+        let dropNav = btn.nextSibling
+        let btnFilter = btn.children[0]
+        
+        if (link != btn && link != btnFilter) {
+            dropdown.classList.remove('show');
+        }
+
+        if(dropdown.classList.contains('select-multiple')){          
+            //let dropNav = dropdown.children[1]
+            let childs = dropNav.childNodes
+            childs.forEach(function(child){
+                
+                if (link == child) {
                     if(!dropdown.classList.contains('show')){
                         dropdown.classList.add('show');
                     } else {
                         dropdown.classList.remove('show');
                     }
-                }
-            }  
-            
-            if (link == child) {
+                }           
+            })       
+        }
+        if(dropdown.classList.contains('select-ocean')){
+            //let dropNav = dropdown.children[1]
+            let childs = dropNav.childNodes
+            childs.forEach(function(child){
+                if(child.classList.contains('input-search')){
+                    let search = child.children[0]
+                    if (link == search) {
+                        if(!dropdown.classList.contains('show')){
+                            dropdown.classList.add('show');
+                        } else {
+                            dropdown.classList.remove('show');
+                        }
+                    }
+                }  
+            }) 
+        }
+    })
+    
+    let toggleDate = document.querySelectorAll('.datepicker');
+    toggleDate.forEach(function(btn){
+        let dropdown = btn.parentNode;
+        let dropNav = btn.nextSibling
+        
+        if (link != btn) {
+            dropdown.classList.remove('show');
+        }
+        
+        let head = dropNav.children[0]
+        let childHead = head.childNodes
+        childHead.forEach(function(item){
+            if (link == item) {
                 if(!dropdown.classList.contains('show')){
-                    dropdown.classList.add('show');
-                } else {
-                    dropdown.classList.remove('show');
+                    dropdown.classList.add('show')
                 }
-            }           
-        })       
-      }
-    });
+            }
+        })
+    })
+    let headDate = document.querySelectorAll('.table-datepicker .item-date');
+    headDate.forEach(function(item){
+        let table = item.parentNode
+        let body = table.parentNode
+        let nav = body.parentNode
+        let oceanDate = nav.parentNode
+        
+        let childItem = item.childNodes
+        childItem.forEach(function(child){
+            if (link == child) {
+                if(!oceanDate.classList.contains('show')){
+                    oceanDate.classList.add('show')
+                }
+            }
+        })        
+    })
+    
+    let toggleTime = document.querySelectorAll('.timepicker');
+    toggleTime.forEach(function(btn){
+        let dropdown = btn.parentNode;
+        let dropNav = btn.nextSibling
+        let childs = dropNav.childNodes
+        if (link != btn) {
+            dropdown.classList.remove('show');
+        }
+        childs.forEach(function(child){
+            let itemTime = child.childNodes
+            itemTime.forEach(function(item){                
+                if (link == item) {
+                    if(!dropdown.classList.contains('show')){
+                        dropdown.classList.add('show');
+                    }
+                } 
+            })
+            
+        })
+    })
 });
 function tempMsg(msg,time){
     setTimeout(function(){

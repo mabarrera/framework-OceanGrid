@@ -31,7 +31,7 @@ selectOcean.forEach(function(select, index){
         btnSelect.classList.add(style)
     }
 
-    let btnFilter = document.createElement('div')
+    let btnFilter = document.createElement('span')
         btnFilter.classList.add('filter-option')
     
     btnSelect.append(btnFilter)
@@ -181,7 +181,7 @@ function optionBtn(arrData,select,btnFilter){
 
         let option = data
         if(count != i){
-            option = data+','
+            option = data+', '
         }
         btnFilter.append(option)
     })
@@ -191,34 +191,39 @@ function selectBox(btnFilter){
     let btn = btnFilter.parentNode
     let dropSelect = btn.parentNode
     let dropNav = dropSelect.children[1]
+    
     btn.addEventListener('click',function(){
         dropSelect.classList.toggle('show');
         if(dropSelect.classList.contains('select-search')){
             searchData(dropNav)
-        }        
-        let stateDrop = selectVisible(dropNav)        
-        if(dropSelect.classList.contains('dropdown') && stateDrop == false){
-            dropSelect.classList.add('dropup')
-        } else if (dropSelect.classList.contains('dropdown') && stateDrop == true) {
-            dropSelect.classList.remove('dropup')
-        } else if(dropSelect.classList.contains('dropup') && stateDrop == false){
-            dropSelect.classList.add('dropdown')
-        } else if (dropSelect.classList.contains('dropup') && stateDrop == true) {
-            dropSelect.classList.remove('dropdown')
-        } else if (dropSelect.classList.contains('dropleft') && stateDrop == false) {
-            dropSelect.classList.add('dropright')
-            dropSelect.classList.add('droptop')
-        } else if (dropSelect.classList.contains('dropleft') && stateDrop == true) {
-            dropSelect.classList.remove('dropright')
-            dropSelect.classList.remove('droptop')
-        } else if (dropSelect.classList.contains('dropright') && stateDrop == false) {
-            dropSelect.classList.add('dropleft')
-            dropSelect.classList.add('droptop')
-        } else if (dropSelect.classList.contains('dropright') && stateDrop == true) {
-            dropSelect.classList.remove('dropleft')
-            dropSelect.classList.remove('droptop')
         }
-    })    
+        updDropdown(dropNav,dropSelect)        
+        
+    })
+}
+function updDropdown(dropNav,dropSelect){
+    let stateDrop = selectVisible(dropNav)        
+    if(dropSelect.classList.contains('dropdown') && stateDrop == false){
+        dropSelect.classList.add('dropup')
+    } else if (dropSelect.classList.contains('dropdown') && stateDrop == true) {
+        dropSelect.classList.remove('dropup')
+    } else if(dropSelect.classList.contains('dropup') && stateDrop == false){
+        dropSelect.classList.add('dropdown')
+    } else if (dropSelect.classList.contains('dropup') && stateDrop == true) {
+        dropSelect.classList.remove('dropdown')
+    } else if (dropSelect.classList.contains('dropleft') && stateDrop == false) {
+        dropSelect.classList.add('dropright')
+        dropSelect.classList.add('droptop')
+    } else if (dropSelect.classList.contains('dropleft') && stateDrop == true) {
+        dropSelect.classList.remove('dropright')
+        dropSelect.classList.remove('droptop')
+    } else if (dropSelect.classList.contains('dropright') && stateDrop == false) {
+        dropSelect.classList.add('dropleft')
+        dropSelect.classList.add('droptop')
+    } else if (dropSelect.classList.contains('dropright') && stateDrop == true) {
+        dropSelect.classList.remove('dropleft')
+        dropSelect.classList.remove('droptop')
+     }
 }
 function selectOption(arrData,selectNav){
     let oceanSelect = selectNav.parentNode
@@ -319,7 +324,7 @@ function updateBtn(select,btnFilter){
         }
         let add = data
         if(i != (cant-1)){
-            add = data+','
+            add = data+', '
         }
         btnFilter.append(add)
     })
@@ -372,10 +377,11 @@ function createOption(value,classopt,selected,ico){
     return item;
 }
 function searchData(selectOcean){
+    let selectBox = selectOcean.parentNode
     let boxSearch = selectOcean.children[0]
     let search = boxSearch.children[0]
     let child = selectOcean.childNodes
-
+    
     search.addEventListener('keyup',function(){
         let entry = search.value.toLowerCase()
         child.forEach(function(option, i){
@@ -389,7 +395,7 @@ function searchData(selectOcean){
                 }
             }        
         })
-
+        
     })
 }
 function selectVisible(data){
