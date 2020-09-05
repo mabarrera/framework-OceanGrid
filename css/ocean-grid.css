@@ -685,23 +685,10 @@ h6, .h6 {
 
 /********* Carousel *********/
 .carousel {
-  position: relative;
-  overflow: hidden;
   width: 100%;
   height: auto;
-}
-.carousel .carousel-progresbar {
-  position: absolute;
-  top: 0;
-  width: 100%;
-  height: 5px;
-  background-color: rgba(0, 0, 0, 0.2);
-  z-index: 12;
-}
-.carousel .carousel-progresbar .progress-bar {
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
-  transition: width 0.8s;
+  position: relative;
+  overflow: hidden;
 }
 .carousel .carousel-indicators {
   display: flex;
@@ -717,7 +704,6 @@ h6, .h6 {
   width: 30px;
   margin: 0 2px;
   background-color: #FFFFFF;
-  display: inline-block;
   opacity: 0.6;
   filter: alpha(opacity=60);
   transition: 0.5s;
@@ -731,39 +717,17 @@ h6, .h6 {
   filter: alpha(opacity=100);
 }
 .carousel .carousel-content {
-  position: relative;
-  max-height: 100vh;
-  height: auto;
-  z-index: 10;
-  transition: 2s;
-  object-fit: cover;
+  display: flex;
+  width: 100%;
 }
 .carousel .carousel-content .carousel-item {
-  display: none;
-}
-.carousel .carousel-content .carousel-item img {
+  position: relative;
   width: 100%;
-  object-fit: cover;
+  display: flex;
+  flex-shrink: 0;
 }
 .carousel .carousel-content .carousel-item .carousel-text {
   position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  display: flex;
-  color: #FFFFFF;
-  z-index: 12;
-}
-.carousel .carousel-content .carousel-item .carousel-text h1, .carousel .carousel-content .carousel-item .carousel-text h2, .carousel .carousel-content .carousel-item .carousel-text h3, .carousel .carousel-content .carousel-item .carousel-text h4, .carousel .carousel-content .carousel-item .carousel-text h5, .carousel .carousel-content .carousel-item .carousel-text h6 {
-  margin: 0;
-}
-.carousel .carousel-content .carousel-item .carousel-text p {
-  font-weight: 400;
-}
-.carousel .carousel-content .carousel-item.active {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 .carousel .carousel-controls {
   position: absolute;
@@ -774,15 +738,16 @@ h6, .h6 {
   justify-content: space-between;
   align-items: center;
 }
-.carousel .carousel-controls a {
+.carousel .carousel-controls .controls-item {
   display: flex;
   align-items: center;
   width: 60px;
   height: 60px;
   transition: 0.5s;
   z-index: 11;
+  cursor: pointer;
 }
-.carousel .carousel-controls a:after {
+.carousel .carousel-controls .controls-item:after {
   content: "";
   display: block;
   position: relative;
@@ -802,21 +767,153 @@ h6, .h6 {
   filter: alpha(opacity=50);
   transition: 0.5s;
 }
-.carousel .carousel-controls a.control-prev:after {
+.carousel .carousel-controls .controls-item.control-prev:after {
   border-width: 3px 0 0 3px;
 }
-.carousel .carousel-controls a.control-next:after {
+.carousel .carousel-controls .controls-item.control-next:after {
   border-width: 0 3px 3px 0;
   left: -3px;
 }
-.carousel .carousel-controls a:hover {
+.carousel .carousel-controls .controls-item:hover {
   background-color: rgba(0, 0, 0, 0.2);
 }
-.carousel .carousel-controls a:hover:after {
+.carousel .carousel-controls .controls-item:hover:after {
   opacity: 1;
   filter: alpha(opacity=100);
 }
 
+/*
+.carousel{
+    width: 100%;
+    height: auto;
+    .carousel-progresbar{
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 5px;
+        background-color: rgba(0, 0, 0, .2);
+        z-index: 12;
+        .progress-bar{
+            height: 100%;
+            background-color: rgba(0, 0, 0, .8);
+            transition: width .8s;
+        }
+
+    }
+    .carousel-indicators{
+        display: flex;
+        justify-content: center;
+        position: absolute;
+        bottom: 15px;
+        width: 100%;
+        z-index: 13;
+        .indicators-item{   
+
+            cursor: pointer;
+            height: 3px;
+            width: 30px;
+            margin: 0 2px;
+            background-color: #FFFFFF;
+            @include opacity(.6);
+            transition: .5s;         
+            &:hover{
+                @include opacity(1);
+            }
+            &.active{
+                @include opacity(1);
+            }
+        }
+    }
+    .carousel-content{
+        position: relative;
+        width: 100%;
+        max-height: 100vh;
+        height: auto;
+        z-index: 10;
+        transition: 2s;
+        object-fit: cover;
+        display: inline-flex;
+
+        .carousel-item{
+            position: relative;
+            display: flex;            
+
+            img{
+                width: 100%;
+                object-fit: cover;
+            }
+            .carousel-text{
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                display: flex;
+                color: #FFFFFF;
+                z-index: 12;
+                h1, h2, h3, h4, h5, h6{
+                    margin: 0;
+                }
+                p{
+                    font-weight: 400;
+                }
+            } 
+            &.active{
+                //display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }           
+        }        
+    }
+    .carousel-controls{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        a{
+            display: flex;
+            align-items: center;
+            width: 60px;
+            height: 60px;
+            transition: .5s;
+            z-index: 11;
+            &:after{
+                content: "";
+                display: block;
+                position: relative;
+                top: 0;
+                left: 0;
+                width: 15px;
+                height: 15px;
+                margin: auto;
+                @include rotate(-45deg);
+                @include border(0,solid,#FFFFFF);
+                @include opacity(.5);
+                transition: .5s;
+            }
+            &.control-prev{
+                &:after{
+                    border-width: 3px 0 0 3px;
+                }                
+            }
+            &.control-next{
+                &:after{
+                    border-width: 0 3px 3px 0;
+                    left: -3px;
+                }                
+            }            
+            &:hover{                
+                background-color: rgba(0, 0, 0, .2);
+                &:after{
+                    @include opacity(1);
+                }
+            }
+        }
+    }
+}
+*/
 /********* Generals *********/
 code {
   padding: 2px 4px;
@@ -890,6 +987,44 @@ code {
 .carousel-fade .carousel-item {
   animation-name: fade;
   animation-duration: 2.5s;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.pagination .option {
+  display: flex;
+  justify-content: center;
+  padding: 0.3rem 0.8rem;
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.125);
+  margin-right: 5px;
+  font-size: 85%;
+  cursor: pointer;
+  min-width: 33px;
+}
+.pagination .option:last-child {
+  margin-right: 0;
+}
+.pagination .option:hover {
+  background-color: rgba(0, 0, 0, 0.125);
+}
+.pagination .option.enabled {
+  opacity: 0.5;
+  filter: alpha(opacity=50);
+  cursor: auto;
+  background-color: transparent;
+}
+.pagination .option.active {
+  background-color: rgba(0, 0, 0, 0.125);
+}
+.pagination .option.opt-line {
+  border-width: 0;
+  cursor: auto;
+  background-color: transparent;
 }
 
 .btn-rounded {
@@ -1693,6 +1828,44 @@ label {
 }
 .table.table-hover tbody tr:hover td {
   background-color: rgba(0, 0, 0, 0.04);
+}
+
+.datatable-wrapper .table-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.datatable-wrapper .table-head .table-show {
+  display: flex;
+  align-items: center;
+}
+.datatable-wrapper .table-head .table-show label {
+  margin: initial;
+}
+.datatable-wrapper .table-head .table-show .select-ocean {
+  margin-left: 5px;
+}
+.datatable-wrapper .table-head .table-search {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.datatable-wrapper .table-head .table-search label {
+  margin: initial;
+}
+.datatable-wrapper .table-head .table-search .form-control {
+  margin-left: 5px;
+}
+.datatable-wrapper .table {
+  margin: 10px 0;
+}
+.datatable-wrapper .table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.datatable-wrapper .table-footer .table-info {
+  font-size: 85%;
 }
 
 /********* Colors *********/

@@ -229,71 +229,8 @@ function viewPassword(input,i){
         }
     })
 }
-/******** Datable ********/
-let datatable = document.querySelectorAll('.datatable')
-datatable.forEach(function(item){
-    let cloneTable = item.cloneNode(true);
-    let tableWrapper = document.createElement('div');
-        tableWrapper.classList.add('datatable-wrapper');
-
-    let tablehead = document.createElement('div');
-        tablehead.classList.add('table-head');
-
-    let tableShow = document.createElement('div');
-        tableShow.classList.add('table-show');    
-    
-    let tableSearch = document.createElement('div');
-        tableSearch.classList.add('table-search');
-
-    let labelShow = document.createElement('label');
-    let selectShow = document.createElement('select');
-    let dataSelect = ['10','25','50','100'];
-        for (let i = 0; i < dataSelect.length; i++) {
-            const option = dataSelect[i];
-            console.log(option);
-            let optionSelect = document.createElement('option');
-            optionSelect.value = option;
-            optionSelect.text = option;
-            selectShow.append(optionSelect);
-        }
-
-        labelShow.innerHTML = 'View'
-        labelShow.append(selectShow);
-
-    tableShow.append(labelShow)
-
-    let labelSearch = document.createElement('label');
-    let inputSearch = document.createElement('input');
-        labelSearch.innerHTML = 'Search';
-        labelSearch.append(inputSearch);
-    
-    tableSearch.append(labelSearch)
-    
-
-    let tableFooter = document.createElement('div');
-        tableFooter.classList.add('table-footer');
-
-    let tableInfo = document.createElement('div');
-        tableFooter.classList.add('table-info');
-
-    let tableNav = document.createElement('div');
-        tableNav.classList.add('table-nav');
-
-    tablehead.append(tableShow)
-    tablehead.append(tableSearch)
-    tableFooter.append(tableInfo);
-    tableFooter.append(tableNav);
-
-    tableWrapper.append(tablehead)
-    tableWrapper.append(cloneTable)
-    tableWrapper.append(tableFooter);
-
-    item.before(tableWrapper);
-    item.remove();
-});
 
 function elemVisible(data){
-    
     let ocean = data.getBoundingClientRect();
     
     let top = ocean.top
@@ -310,7 +247,7 @@ function elemVisible(data){
     } else {
             state = false
     }
-    
+
     return state
 }
 
@@ -421,124 +358,137 @@ document.addEventListener('click', function(e){
         })
     })
 });
-function tempMsg(msg,time){
-    setTimeout(function(){
-        msg.remove()
-    }, time);
-}
 
 /******** Carousel ********/
-/*
-let indice = 1;
-let max = 0;
-let time = 5000;
-muestraSlide(indice);
+const carrousel = document.querySelectorAll('.carousel');
+let timeSlide = 3000
+let widthItem = 0
 
-const indicator = document.querySelectorAll('.indicators-item');
-indicator.forEach(function (item) {
-    max ++;
-    item.addEventListener('click', function(){
-        let numSlide = item.dataset.slide;
-        muestraSlide(indice = numSlide);
-    });
-});
+carrousel.forEach(function(slide) {
+    slide.dataset.slideStatus = 'play'
+    let intervalSlide = slide.dataset.slideInterval
+    if(intervalSlide != undefined){
+        timeSlide = intervalSlide
+    }
+    
+    let slideHover = slide.dataset.slideHover;
+    if(slideHover == undefined || slideHover.toLowerCase() != 'true'){
+        slide.dataset.slideHover = 'false'
+    }
+    
+    let position = 1
+    let cant = 0
+    intervalView(position,slide)
+    viewSlide(position,slide)
+    //Indicators
+    let indicator = slide.children[0]
+    indicatorSlide(indicator,cant,position)
 
-const controlSlide = document.querySelectorAll('.controls-item');
-controlSlide.forEach(function(item){  
-    item.addEventListener('click', function(){
-        let nameControl = item.dataset.slide;
-        if (nameControl.toLowerCase() == 'prev') {
-            if(indice == 1){
-                indice = max;
-            } else {
-                indice --;
+    //Content
+    let content = slide.children[1]
+    let itemConten = content.children
+    widthItem = content.children[0].clientWidth    
+    document.addEventListener('resize', function(){
+        widthItem = content.children[0].clientWidth
+    })
+        
+    let cantSlide = itemConten.length
+    
+    //Control
+    let control = slide.children[2]
+    controlSlide(control,cantSlide,position)
+    
+    if( slide.dataset.slideHover.toLowerCase() == 'true'){
+        slide.addEventListener('mouseover', function(){
+            slide.dataset.slideStatus = 'pause'
+        })
+    }    
+    slide.addEventListener('mouseout', function(){
+        slide.dataset.slideStatus = 'play'
+    })
+})
+function indicatorSlide(indicators,cant,position){
+    let slide = indicators.parentNode
+    let indicator = indicators.children
+    for (let i = 0; i < indicator.length; i++) {
+        let item = indicator[i];
+        cant ++
+        item.addEventListener('click', function(){
+            let num = i + 1
+            viewSlide(position = num,slide)
+        });
+    }
+}
+function controlSlide(controls,cant,index){
+    let slide = controls.parentNode
+    let control = controls.children
+    for (let i = 0; i < control.length; i++) {
+        let item = control[i];
+        item.addEventListener('click', function(){
+            if(item.classList.contains('control-prev')){
+                if(index == 1){
+                    index = cant;
+                } else {
+                    index --;
+                }
+            } else if(item.classList.contains('control-next')){
+                if(index == cant){
+                    index = 1;
+                } else {
+                    index ++;
+                }                
             }
-        } else if (nameControl.toLowerCase() == 'next') {
-            if(indice == max){
-                indice = 1;
-            } else {
-                indice ++;
+            viewSlide(index,slide)
+        })
+    }
+}
+function intervalView(num,slide){
+    let contentSlide = slide.children[0]
+    let cantItem = contentSlide.children.length
+    
+    setInterval(function(){
+        let status = slide.dataset.slideStatus
+        if(status == 'play'){
+            viewSlide(num+=1,slide);
+            if(num > cantItem){
+                num = 1
             }
         }
-        muestraSlide(indice);
-    });
-});
+    },timeSlide)
+}
 
-setInterval(function tiempo(){
-    muestraSlide(indice+=1);
-},time)
-
-function muestraSlide(n){    
-    let i;
-    let slide = document.getElementsByClassName('carousel-item');
-    let indicators = document.getElementsByClassName('indicators-item');
-
-    let cantSlide = slide.length;
-
-    if(n > cantSlide){
-        indice = 1
-    }
+function viewSlide(num,slide){
+    //Indicators
+    let indicators = slide.children[0]
+    let itemIndicator = indicators.children
+    //Items
+    let content = slide.children[1]
+    let itemContent = content.children
     
-    if(n < 1){
-        indice = cantSlide
+    let cantItem = itemContent.length
+
+    if(num > cantItem){
+        num = 1
+    }
+    if(num < 1){
+        num = cantItem
     }
 
-    for (i = 0; i < cantSlide; i++) {
-        slide[i].className = slide[i].className.replace(" active","");
-        indicators[i].className = indicators[i].className.replace(" active","");   
-    }
+    let delis = widthItem * (num-1)
+
+    content.style.transform = "translate("+-delis+"px)"
+    content.style.transition = "transform 1s"
     
-    slide[indice-1].className += ' active';
-    indicators[indice-1].className += ' active';
-} 
-/******** Datatable ********/
-/*
-let pageNumber = 1;
-let pageSize = 2; //Cantidad de item que muestra
-let noticias = ["noticias 1","noticias 2","noticias 3","noticias 4","noticias 5","noticias 6","noticias 7","noticias 8","noticias 9","noticias 10","noticias 11","noticias 12","noticias 13"];
-let noticiasHtml = '';
-let pagination;
-var pageCont = Math.ceil(noticias.length/pageSize);
-
-function paginate(array,pages_size,page_number){
-    return array.slice((page_number-1) * pages_size, page_number * pages_size); //6 * 2, 1*2
-}
-
-function numPage(number){
-    pageNumber = number;
-    showNoticias(noticias);
-}
-
-function nextPage(){
-    pageNumber++;
-    showNoticias(noticias);
-}
-
-function prevPage(){
-    pageNumber--;
-    showNoticias(noticias);
-}
-
-function showNoticias(){
-    let pagination = paginate(noticias,pageSize,pageNumber);
-    //console.log(pagination);
-    noticiasHtml = "<ul>";
-    pagination.forEach(noticia =>{
-        noticiasHtml += "<li>"+noticia+"</li>";
-    })
-    noticiasHtml += "</ul>";
-    noticiasHtml += pageNumber > 1 ? "<button onclick='prevPage()'>Anterior</buttton>" : "";
-
-    noticiasHtml += "<div>";
-    for (let i = 0; i < pageCont; i++) {
-        let num = i + 1;
-        noticiasHtml += "<button onclick='numPage("+num+")'> - "+num+" - </buttton>";        
+    for (let i = 0; i < cantItem; i++) {
+        let item = itemContent[i];
+        let indicator = itemIndicator[i]
+        let indItem = i + 1
+        if (indItem == num){
+            item.classList.add('active')
+            indicator.classList.add('active')
+        } else {
+            item.classList.remove('active')
+            indicator.classList.remove('active')
+        }
     }
-    noticiasHtml += "</div>";
-
-    noticiasHtml += pageNumber < pageCont ? "<button onclick='nextPage()'>Siguiente</buttton>" : "";
-    document.getElementById("noticias").innerHTML="";
-    document.getElementById("noticias").innerHTML=noticiasHtml;
 }
-showNoticias();
-*/
