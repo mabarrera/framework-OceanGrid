@@ -361,11 +361,12 @@ document.addEventListener('click', function(e){
 
 /******** Carousel ********/
 const carrousel = document.querySelectorAll('.carousel');
+let timeSlide = 3000
+let widthItem = 0
+
 carrousel.forEach(function(slide) {
     slide.dataset.slideStatus = 'play'
     let intervalSlide = slide.dataset.slideInterval
-    
-    let timeSlide = 3000
     if(intervalSlide != undefined){
         timeSlide = intervalSlide
     }
@@ -374,139 +375,28 @@ carrousel.forEach(function(slide) {
     if(slideHover == undefined || slideHover.toLowerCase() != 'true'){
         slide.dataset.slideHover = 'false'
     }
+    
+    let position = 1
+    let cant = 0
+    intervalView(position,slide)
+    viewSlide(position,slide)
+    //Indicators
+    let indicator = slide.children[0]
+    indicatorSlide(indicator,cant,position)
 
-    let indexSlide = 1
-    
-    //Efect Slide
-    let effectSlide = slide.dataset.slideEffect
-    
-    //Add indicators
-    let indicators = slide.dataset.slideIndicators
-    if(indicators == undefined || indicators != 'false'){
-        createIndicators(slide)
+    //Content
+    let content = slide.children[1]
+    let itemConten = content.children
+    widthItem = content.children[0].clientWidth    
+    document.addEventListener('resize', function(){
+        widthItem = content.children[0].clientWidth
+    })
         
-    }
-
-    cloneItems(slide)
+    let cantSlide = itemConten.length
     
-    let content = viewContent(slide)
-    let cantSlide = content.children.length
-
-    
-    let interval = setInterval(function(){
-        indexSlide ++
-        if(effectSlide != undefined){            
-            if(indexSlide > cantSlide){
-                indexSlide = 1
-            }
-        }        
-        showSlide(slide,indexSlide)
-        
-    },timeSlide)
-    
-    let itemSlide =  slide.children
-    for(let item of itemSlide){
-        
-        //Indicators
-        if(item.classList.contains('carousel-indicators')){
-            let itemIndicator = item.children
-            for(let option of itemIndicator){
-                option.addEventListener('click',function(){
-                    let indexOpt = option.dataset.slide
-                    showSlide(slide,indexOpt)
-
-                    //Clean Interval
-                    clearInterval(interval)
-                    interval = setInterval(function(){
-                        indexOpt ++
-                        if(effectSlide != undefined){            
-                            if(indexSlide > cantSlide){
-                                indexSlide = 1
-                            }
-                        } 
-                        showSlide(slide,indexOpt)
-                    },timeSlide)
-                })           
-            }
-        }
-
-        if(item.classList.contains('carousel-content')){
-            item.children[0].classList.add('active')
-            let widthItem = item.children[0].clientWidth
-
-            if(effectSlide == undefined){
-                let translate = indexSlide * widthItem
-                item.style.transform = "translate("+-translate+"px)"
-            }
-        }
-
-        if(item.classList.contains('controls-item')){
-            
-            item.addEventListener('click',function(){
-                let goIndex = item.dataset.slide
-
-                if(goIndex == 'prev'){
-                    if(effectSlide == undefined){
-                        if(indexSlide <= 0) return
-                        indexSlide --
-                    } else {
-                        if(indexSlide == 1){
-                            indexSlide = cantSlide;
-                        } else {
-                            indexSlide --;
-                        }
-                    }
-                }
-
-                if(goIndex == 'next'){
-                    if(effectSlide == undefined){
-                        if(indexSlide >= cantSlide - 1) return
-                        indexSlide ++
-                    } else {
-                        if(indexSlide == cantSlide){
-                            indexSlide = 1;
-                        } else {
-                            indexSlide ++;
-                        }
-                    }
-                }
-                
-                showSlide(slide,indexSlide)
-                
-                //Clean Interval
-                clearInterval(interval)
-                interval = setInterval(function(){
-                    indexSlide ++
-                    if(effectSlide != undefined){            
-                        if(indexSlide > cantSlide){
-                            indexSlide = 1
-                        }
-                    } 
-                    showSlide(slide,indexSlide)
-                },timeSlide)
-            })
-        }
-    }
-
-    //let content = viewContent(slide)
-    if(effectSlide == undefined){
-        content.addEventListener('transitionend', function(){    
-            let widthItem = content.children[0].clientWidth            
-            let cant = content.children.length
-            
-            let itemActive = content.children[indexSlide]
-            if(itemActive.classList.contains('first-clone')){
-                content.style.transition = "0s"
-                indexSlide = cant - indexSlide
-                content.style.transform = "translate("+(-indexSlide * widthItem)+"px)"
-            }
-            if(itemActive.classList.contains('last-clone')){
-                content.style.transition = "0s"
-                indexSlide = cant - 2
-                content.style.transform = "translate("+(-indexSlide * widthItem)+"px)"
-            }
-        })
-    }
+    //Control
+    let control = slide.children[2]
+    controlSlide(control,cantSlide,position)
     
     if( slide.dataset.slideHover.toLowerCase() == 'true'){
         slide.addEventListener('mouseover', function(){
@@ -517,122 +407,88 @@ carrousel.forEach(function(slide) {
         slide.dataset.slideStatus = 'play'
     })
 })
-function cloneItems(slide){
-    let content = viewContent(slide)
-    
-    let items = content.children
-    let cantItem = items.length
-
-    let effectSlide = slide.dataset.slideEffect
-    if(effectSlide == undefined){
-        
-        let firstItem = content.children[0]
-        let cloneFirst = firstItem.cloneNode(true)
-            cloneFirst.classList.add('first-clone')
-
-        let lastItem = content.children[cantItem-1]
-        let cloneLast = lastItem.cloneNode(true)
-            cloneLast.classList.add('last-clone')
-        
-        firstItem.before(cloneLast)
-        lastItem.after(cloneFirst)
-    }
-
-    if(effectSlide != undefined){
-        slide.classList.add('carousel-'+effectSlide)
+function indicatorSlide(indicators,cant,position){
+    let slide = indicators.parentNode
+    let indicator = indicators.children
+    for (let i = 0; i < indicator.length; i++) {
+        let item = indicator[i];
+        cant ++
+        item.addEventListener('click', function(){
+            let num = i + 1
+            viewSlide(position = num,slide)
+        });
     }
 }
-function createIndicators(slide){    
-    let content = slide.children[0]
-    let items = content.children
-    
-    let indicator = document.createElement('ol')
-        indicator.classList.add('carousel-indicators')
-        
-    let i = 0
-    for(let item of items){
-        let itemIndicator = document.createElement('li')
-            itemIndicator.classList.add('indicators-item')
-            if(i == 0){
-                itemIndicator.classList.add('active')
+function controlSlide(controls,cant,index){
+    let slide = controls.parentNode
+    let control = controls.children
+    for (let i = 0; i < control.length; i++) {
+        let item = control[i];
+        item.addEventListener('click', function(){
+            if(item.classList.contains('control-prev')){
+                if(index == 1){
+                    index = cant;
+                } else {
+                    index --;
+                }
+            } else if(item.classList.contains('control-next')){
+                if(index == cant){
+                    index = 1;
+                } else {
+                    index ++;
+                }                
             }
-            itemIndicator.dataset.slide = i+1
-
-        indicator.append(itemIndicator)
-        i ++
+            viewSlide(index,slide)
+        })
     }
-    content.before(indicator)    
 }
-function viewContent(slide){
-    let indicator = slide.dataset.slideIndicators
+function intervalView(num,slide){
+    let contentSlide = slide.children[0]
+    let cantItem = contentSlide.children.length
     
-    let ind = 0
-    if(indicator == undefined || indicator == 'true'){
-        ind = 1
-    }
-
-    let content = slide.children[ind]
-    
-    return content
-}
-function cantItemSlide(slide){
-    let indexItem = 1
-    let indicators = slide.dataset.slideIndicators
-    if(indicators == 'false'){
-        indexItem = 0
-    }
-
-    let content = slide.children[indexItem]
-    let cantItem = content.children.length
-
-    return cantItem
-}
-function showSlide(slide,index){
-    let content = viewContent(slide)
-    let items = content.children
-    let cantItem = items.length
-
-    let indicators = slide.dataset.slideIndicators
-    let effectSlide = slide.dataset.slideEffect
-    
-    let active = index
-
-    if(effectSlide == undefined){
-        if(index == (cantItem-1)){
-            active = 1
-        }
-        let widthItem = content.children[0].clientWidth
-        let translate = index * widthItem
-        content.style.transform = "translate("+-translate+"px)"
-        content.style.transition = "transform 1s"
-
-    }
-
-    if(indicators == undefined || indicators != 'false'){
-        let indicator = slide.children[0]
-        let itemsIndicator = indicator.children
-        let i = 1
-        for(let line of itemsIndicator){
-            if(active == i){
-                line.classList.add('active')
-            } else {
-                line.classList.remove('active')
+    setInterval(function(){
+        let status = slide.dataset.slideStatus
+        if(status == 'play'){
+            viewSlide(num+=1,slide);
+            if(num > cantItem){
+                num = 1
             }
-            i ++
         }
+    },timeSlide)
+}
+
+function viewSlide(num,slide){
+    //Indicators
+    let indicators = slide.children[0]
+    let itemIndicator = indicators.children
+    //Items
+    let content = slide.children[1]
+    let itemContent = content.children
+    
+    let cantItem = itemContent.length
+
+    if(num > cantItem){
+        num = 1
+    }
+    if(num < 1){
+        num = cantItem
     }
 
-    let cant = 0
-    if(effectSlide != undefined){
-        cant = 1
-    }
+    let delis = widthItem * (num-1)
 
-    for(let item of items){
-        if(active == cant){
+    content.style.transform = "translate("+-delis+"px)"
+    content.style.transition = "transform 1s"
+    
+    for (let i = 0; i < cantItem; i++) {
+        let item = itemContent[i];
+        let indicator = itemIndicator[i]
+        let indItem = i + 1
+        if (indItem == num){
             item.classList.add('active')
+            indicator.classList.add('active')
         } else {
             item.classList.remove('active')
+            indicator.classList.remove('active')
         }
-        cant ++
     }
 }
